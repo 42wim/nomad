@@ -854,6 +854,10 @@ func (d *DockerDriver) detectIP(c *docker.Container) (string, bool) {
 		}
 
 		ip = net.IPAddress
+		if d.driverConfig.Labels["use_ipv6_address"] == "true" {
+			ip = net.GlobalIPv6Address
+		}
+
 		ipName = name
 
 		// Don't auto-advertise IPs for default networks (bridge on
