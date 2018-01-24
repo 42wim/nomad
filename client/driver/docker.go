@@ -202,6 +202,7 @@ type DockerDriverConfig struct {
 	MacAddress       string              `mapstructure:"mac_address"`        // Pin mac address to container
 	SecurityOpt      []string            `mapstructure:"security_opt"`       // Flags to pass directly to security-opt
 	Devices          []DockerDevice      `mapstructure:"devices"`            // To allow mounting USB or other serial control devices
+	UseIPv6Address   bool                `mapstructure:"use_ipv6_address"`   // Flag to use the GlobalIPv6Address from the container as the detected IP
 }
 
 func sliceMergeUlimit(ulimitsRaw map[string]string) ([]docker.ULimit, error) {
@@ -644,6 +645,9 @@ func (d *DockerDriver) Validate(config map[string]interface{}) error {
 			"devices": {
 				Type: fields.TypeArray,
 			},
+			"use_ipv6_address": {
+				Type: fields.TypeBool,
+			},
 		},
 	}
 
@@ -854,6 +858,9 @@ func (d *DockerDriver) detectIP(c *docker.Container) (string, bool) {
 		}
 
 		ip = net.IPAddress
+		if d.driverConfig.UseIPv6Address {
+			ip = net.GlobalIPv6Address
+		}
 		ipName = name
 
 		// Don't auto-advertise IPs for default networks (bridge on
