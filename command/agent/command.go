@@ -378,6 +378,7 @@ func (c *Command) setupAgent(config *Config, logOutput io.Writer, inmem *metrics
 	c.httpServer = http
 
 	// Setup update checking
+	config.DisableUpdateCheck = true
 	if !config.DisableUpdateCheck {
 		version := config.Version.Version
 		if config.Version.VersionPrerelease != "" {
