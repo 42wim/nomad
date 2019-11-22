@@ -78,6 +78,8 @@ func (d *dockerLogger) Start(opts *StartOpts) error {
 
 	go func() {
 		defer close(d.doneCh)
+		d.logger.Info("no log streaming please")
+		return
 
 		stdout, stderr, err := d.openStreams(ctx, opts)
 		if err != nil {
